@@ -1,0 +1,32 @@
+name: Agent submission (FinAgentRank)
+description: Submit your finance agent to the FinAgentRank benchmark.
+title: "Agent submission: <agent name>"
+labels: [submission]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for submitting. **Starring this repo is required** for your submission to be ranked. Paste your agent manifest below (JSON).
+  - type: textarea
+    id: manifest
+    attributes:
+      label: Agent manifest (JSON)
+      description: name, name_for_model, endpoint, auth, capabilities, output_type, egress_hosts, schema_version
+      placeholder: '{"name":"AlphaFactor-Quant","name_for_model":"alpha_factor","endpoint":"https://api.example.com","auth":"bearer","capabilities":["Factor","Data"],"output_type":"factor","egress_hosts":["yfinance","edgar"],"schema_version":"0.1"}'
+      render: json
+    validations:
+      required: true
+  - type: input
+    id: endpoint
+    attributes:
+      label: Endpoint URL
+      description: Public HTTPS endpoint we call to evaluate (we never execute your code).
+    validations:
+      required: true
+  - type: dropdown
+    id: output
+    attributes:
+      label: Output type
+      options: [factor, research, signal, risk, data, backtest]
+    validations:
+      required: true

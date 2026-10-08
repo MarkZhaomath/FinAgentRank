@@ -194,8 +194,11 @@
         <b style="font-size:15px" data-i18n="star_title">Star the repo first — then submit.</b>
         <small style="color:#7a6017;display:block" data-i18n="star_desc">Submitting to the benchmark requires starring this repository (verified via GitHub OAuth). It's the price of an honest ranking that gets seen.</small>
       </div>
-      <button class="btn star" id="starBtn" onclick="startOAuth()" data-i18n="star_btn">Star to submit</button>
+      <button class="btn star" id="starBtn" onclick="startStar()" data-i18n="star_btn">Star to submit</button>
       <small id="starState" style="color:#7a6017;width:100%"></small>
+      <div id="starConfirm" style="display:none;width:100%">
+        <button class="btn star" onclick="confirmStar()" data-i18n="star_done">I've starred — continue</button>
+      </div>
     </div>
     <div class="steps">
       <div class="step"><span class="si">1</span><b data-i18n="step1_t">Star + connect GitHub</b><small data-i18n="step1_d">OAuth authorization, star verified, submit form unlocks.</small></div>
@@ -365,29 +368,23 @@ function renderShare(){
   });
 }
 
-/* ---- 真实点星校验（步骤5） ---- */
-const BACKEND = "http://localhost:8001";   // 后端地址（star_server.py），生产改同源
-function startOAuth(){
-  // 跳后端 /auth/github → GitHub OAuth → 回跳验证 → 轮询解锁
-  try{ window.location = BACKEND + "/auth/github"; }
-  catch(e){ alert("Backend not reachable. Start star_server.py first."); }
+/* ---- 点星即投（零服务器，发布可跑） ---- */
+/* 渠道：点星 → 仓库 star 页；提交 → 预填 GitHub Issue（即投递通道，维护端人工接单评测） */
+const REPO_URL  = "https://github.com/MarkZhaomath/FinAgentRank";
+const ISSUE_URL = REPO_URL + "/issues/new";
+function startStar(){
+  window.open(REPO_URL, "_blank");
+  document.getElementById("starState").textContent = t("star_todo");
+  document.getElementById("starConfirm").style.display = "block";
 }
-(function checkStar(){
-  const q = new URLSearchParams(window.location.search).get("login");
-  const st = document.getElementById("starState");
-  if(!q){ st.textContent = ""; return; }
-  fetch(BACKEND + "/api/star-check?login=" + encodeURIComponent(q))
-    .then(r=>r.json())
-    .then(d=>{ if(d.verified){
-        st.innerHTML = t("star_ok").replace("{login}",d.login);
-        st.style.color="var(--good)";
-        document.getElementById("submitForm").style.display = "block";
-      } else { st.textContent = t("star_no"); }
-    })
-    .catch(()=>{ st.textContent = t("star_offline"); });
-})();
+function confirmStar(){
+  document.getElementById("starState").innerHTML = t("star_ok_local");
+  document.getElementById("starState").style.color = "var(--good)";
+  document.getElementById("submitForm").style.display = "block";
+  document.getElementById("starConfirm").style.display = "none";
+}
 
-/* ---- 提交前 conformance 校验（步骤4+5 打通）---- */
+/* ---- 提交前 conformance 校验（客户端）→ 通过后以 Issue 提交 ---- */
 const OUTPUT_TYPES = ["factor","research","signal","risk","data","backtest"];
 const CAPS = ["Data","Factor","Research","Risk","Signal","Backtest"];
 function runConformance(){
@@ -399,16 +396,14 @@ function runConformance(){
     schema_version: "0.1",
   };
   const box = document.getElementById("conformResult");
-  // 后端可达 → 真 conformance（校验+在线握手）；否则客户端基础校验兜底
-  fetch(BACKEND + "/api/conformance", {
-    method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(manifest),
-  }).then(r=>r.json()).then(render).catch(()=>render(localCheck(manifest)));
+  const res = localCheck(manifest);
+  render(res, manifest);
 
-  function render(res){
+  function render(res, m){
     if(res.passed){
       box.className="c-pass";
       box.innerHTML = t("conf_pass")
-        + (res.handshake ? ` <span class="c-sug">handshake ${res.handshake.status} · ${res.handshake.latency_ms}ms</span>` : "");
+        + `<button class="btn" style="margin-top:10px;display:block" onclick="submitIssue(${JSON.stringify(JSON.stringify(m))})">${t("submit_issue")} →</button>`;
     } else {
       box.className="c-fail";
       const errs = (res.errors||[]).join(" · ");
@@ -427,8 +422,14 @@ function runConformance(){
     if(!m.capabilities.length) errs.push("empty_capabilities");
     if(!OUTPUT_TYPES.includes(m.output_type)) errs.push("invalid_output_type");
     if(!m.egress_hosts.length) errs.push("missing_egress_hosts");
-    return {passed: errs.length===0, errors: errs, suggestions:["backend_unreachable: offline basic check only"]};
+    return {passed: errs.length===0, errors: errs, suggestions:["offline client check — server verification runs at eval time"]};
   }
+}
+function submitIssue(manifestStr){
+  let m; try{ m = JSON.parse(manifestStr); }catch(e){ return; }
+  const title = "Agent submission: " + (m.name || "untitled");
+  const body = "```json\n" + manifestStr + "\n```\n\n---\nFinAgentRank submission (via web form). Maintainer: run eval, return draft score + official rank.";
+  window.open(ISSUE_URL + "?title=" + encodeURIComponent(title) + "&body=" + encodeURIComponent(body), "_blank");
 }
 
 /* ---- 多语言（英文默认，中文隐藏在5种语言里） ---- */
@@ -472,6 +473,10 @@ const I18N = {
   star_title:{en:"Star the repo first — then submit.",zh:"先点星，再提交。",ja:"先にスター、それから投稿。",es:"Marca la estrella primero — luego envía.",pt:"Dê a estrela primeiro — depois submeta."},
   star_desc:{en:"Submitting to the benchmark requires starring this repository (verified via GitHub OAuth). It's the price of an honest ranking that gets seen.",zh:"参与测评需先给本仓库点星（经 GitHub OAuth 校验）。这是让排名被看见、且保持诚实的代价。",ja:"投稿にはこのリポジトリへのスターが必要（GitHub OAuthで確認）。見られる正直な順位の代償だ。",es:"Enviar requiere marcar la estrella del repo (verificado vía GitHub OAuth). Es el precio de un ranking honesto que se ve.",pt:"Submeter requer dar a estrela ao repositório (verificado via GitHub OAuth). É o preço de um ranking honesto que é visto."},
   star_btn:{en:"Star to submit",zh:"点星提交",ja:"スターで投稿",es:"Estrella para enviar",pt:"Estrela para submeter"},
+  star_done:{en:"I've starred — continue",zh:"我已点星，继续",ja:"スター済み——続行",es:"Ya marqué — continuar",pt:"Já dei a estrela — continuar"},
+  star_todo:{en:"Open the repo and click the ⭐ Star button, then come back and continue.",zh:"在新打开的仓库页点一下 ⭐ Star，然后回来点继续。",ja:"開いたリポジトリで⭐スターを押して、戻って続行してください。",es:"Abre el repo y haz clic en ⭐ Star, luego vuelve y continúa.",pt:"Abra o repositório, clique em ⭐ Star e depois volte para continuar."},
+  star_ok_local:{en:"✅ Star noted — submit unlocked.",zh:"✅ 已记录点星——可提交。",ja:"✅ スター記録済み——投稿可能。",es:"✅ Estrella anotada — envío desbloqueado.",pt:"✅ Estrela anotada — submissão liberada."},
+  submit_issue:{en:"Submit on GitHub",zh:"到 GitHub 提交",ja:"GitHubで投稿",es:"Enviar en GitHub",pt:"Submeter no GitHub"},
   step1_t:{en:"Star + connect GitHub",zh:"点星 + 连接 GitHub",ja:"スター＋GitHub接続",es:"Estrella + conectar GitHub",pt:"Estrela + conectar GitHub"},
   step1_d:{en:"OAuth authorization, star verified, submit form unlocks.",zh:"OAuth 授权，校验点星，解锁提交表单。",ja:"OAuth認証でスター確認、投稿フォーム解放。",es:"Autorización OAuth, estrella verificada, formulario desbloqueado.",pt:"Autorização OAuth, estrela verificada, formulário liberado."},
   step2_t:{en:"Point to your API",zh:"指向你的 API",ja:"APIを指定",es:"Apunta a tu API",pt:"Aponte para a sua API"},
