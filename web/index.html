@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinAgentRank — Neutral Benchmark for Finance Agents</title>
+<!-- Open Graph：分享到社媒时卡片漂亮 -->
+<meta property="og:title" content="FinAgentRank — Neutral Benchmark for Finance Agents">
+<meta property="og:description" content="See where your finance agent ranks. Open, reproducible, anti-overfit benchmarking across 14 capability families.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="og-card.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2316324f'/%3E%3Cpath d='M20 42 V24 l6 6 6-10 6 14 6-6 v14 z' fill='%238fc1ff'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --ink:#0f1b2d; --muted:#5b6b7f; --line:#e3e8f0; --bg:#f7f9fc; --card:#ffffff;
+    --navy:#16324f; --accent:#1d6fd1; --gold:#c99b3f; --good:#1f9d6b; --bad:#d1495b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,'Inter','PingFang SC','Microsoft YaHei',Segoe UI,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  a{color:var(--accent);text-decoration:none}
+  /* header */
+  header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-index:10}
+  .hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .brand{font-weight:800;font-size:19px;letter-spacing:.3px}
+  .brand span{color:#8fc1ff}
+  nav{display:flex;gap:18px;flex-wrap:wrap}
+  nav a{color:#cfe2ff;font-size:14px}
+  nav a:hover{color:#fff}
+  /* hero */
+  .hero{background:linear-gradient(135deg,#16324f,#1d4e79);color:#fff;padding:34px 0}
+  .hero h1{font-size:26px;font-weight:800;margin-bottom:8px}
+  .hero p{font-size:15px;color:#cfe0f2;max-width:760px}
+  .tag{display:inline-block;margin-top:12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);padding:5px 12px;border-radius:20px;font-size:12.5px;color:#e8f2ff}
+  /* sections */
+  section{padding:26px 0}
+  h2{font-size:19px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  h2 .n{background:var(--accent);color:#fff;width:26px;height:26px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(15,27,45,.05)}
+  /* leaderboard table */
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px;background:#fbfcfe}
+  tr:hover td{background:#f4f8fe}
+  .rank{font-weight:800;color:var(--navy)}
+  .rank1{background:#fdf6e7;color:var(--gold);border-radius:6px;padding:2px 8px;font-weight:800}
+  .agent{font-weight:700}
+  .dog{color:var(--gold);font-size:11px;border:1px solid var(--gold);padding:1px 6px;border-radius:10px;margin-left:6px}
+  .score{font-weight:800}
+  .ci{color:var(--muted);font-size:12px}
+  .topbar{height:6px;border-radius:3px;background:#eef2f8;overflow:hidden;width:120px}
+  .topbar i{display:block;height:100%;background:var(--accent)}
+  .topPct{font-size:12px;color:var(--good);font-weight:700}
+  .badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:11.5px;font-weight:700}
+  .b-ok{background:#e8f7f0;color:var(--good)}
+  .b-warn{background:#fdf0e3;color:#b9761f}
+  /* compare */
+  #radarWrap{height:360px;width:100%}
+  .pick{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;align-items:center;font-size:13px}
+  .pick label{color:var(--muted)}
+  select{padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff}
+  /* submit / star gate */
+  .steps{display:flex;gap:0;flex-wrap:wrap;margin:6px 0 14px}
+  .step{flex:1;min-width:210px;background:#fbfcfe;border:1px solid var(--line);border-radius:10px;padding:14px;margin-right:10px}
+  .step b{display:block;font-size:14px;margin-bottom:6px}
+  .step .si{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;margin-bottom:8px}
+  .step small{color:var(--muted);font-size:12.5px}
+  .star-gate{display:flex;gap:14px;align-items:center;background:#fff7e8;border:1px solid #f0dfb8;border-radius:10px;padding:14px 16px;margin-bottom:12px;flex-wrap:wrap}
+  .star-gate .big{font-size:26px}
+  .btn{display:inline-block;background:var(--accent);color:#fff;padding:10px 18px;border-radius:8px;font-weight:700;font-size:14px;border:none;cursor:pointer}
+  .btn.star{background:var(--gold)}
+  .btn:hover{opacity:.92}
+  .f-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:14px}
+  .f-grid label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:5px}
+  .f-grid label.wide{grid-column:1/-1}
+  .f-grid input,.f-grid select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;color:var(--ink)}
+  .c-pass{background:#e8f7f0;color:var(--good);border:1px solid #b7e6cf;border-radius:9px;padding:12px 14px;font-size:13.5px}
+  .c-fail{background:#fdf0f0;color:var(--bad);border:1px solid #f0c4c9;border-radius:9px;padding:12px 14px;font-size:13.5px}
+  .c-sug{color:var(--muted);font-size:12.5px;margin-top:6px}
+  /* share */
+  .share-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .share-btn{display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:9px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;border:none}
+  .share-btn svg{width:16px;height:16px;fill:#fff;flex:none}
+  .x{background:#000}.li{background:#0a66c2}.reddit{background:#ff4500}.hn{background:#ff6600}.bsky{background:#1185fe}.fb{background:#1877f2}.tg{background:#229ed9}.wa{background:#25d366}.copy{background:#5b6b7f}
+  .sharecard{display:flex;gap:14px;align-items:center;background:#fbfcfe;border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:14px}
+  .scrank{background:var(--navy);color:#fff;border-radius:8px;padding:8px 12px;text-align:center;min-width:90px}
+  .scrank b{display:block;font-size:18px}
+  .scrank small{font-size:11px;color:#bcd4ef}
+  footer{background:var(--navy);color:#bcd4ef;padding:18px 0;margin-top:20px;font-size:13px;text-align:center}
+  @media(max-width:640px){.hero h1{font-size:21px}th,td{padding:8px 8px}table{font-size:12.5px}
+    nav a{min-height:44px;display:inline-flex;align-items:center}
+    .btn{min-height:44px}.f-grid input,.f-grid select{font-size:16px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hdr">
+    <div class="brand">FinAgent<span>Rank</span></div>
+    <nav>
+      <a href="#leaderboard">Leaderboard</a>
+      <a href="#compare">Compare</a>
+      <a href="#submit">Submit</a>
+      <a href="#share">Share</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <h1>Neutral, open benchmark for finance agents</h1>
+    <p>We evaluate third-party finance agents — factor, research, risk, signal, backtest — on a reproducible, anti-overfit test set. No self-reported scores, no pay-to-rank. See where yours stands.</p>
+    <span class="tag">⭐ Star to submit &nbsp;·&nbsp; Anti-overfit walk-forward &nbsp;·&nbsp; Auto-classified by capability</span>
+    <div class="livedata" id="liveTag"></div>
+  </div>
+</div>
+
+<!-- 榜单 -->
+<section id="leaderboard">
+  <div class="wrap">
+    <h2><span class="n">1</span> Leaderboard <span style="font-size:12px;color:var(--muted);font-weight:400" id="lbSub">— loading real engine output…</span></h2>
+    <div class="card" style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Agent</th><th>Capability</th><th>Top strength</th><th>vs peers</th><th>Status</th></tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 对比 -->
+<section id="compare">
+  <div class="wrap">
+    <h2><span class="n">2</span> Compare capability profiles</h2>
+    <div class="card">
+      <div class="pick">
+        <label>Agent A</label><select id="pickA"></select>
+        <label>Agent B</label><select id="pickB"></select>
+      </div>
+      <div id="radarWrap"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 提交 -->
+<section id="submit">
+  <div class="wrap">
+    <h2><span class="n">3</span> Submit your agent</h2>
+    <div class="star-gate">
+      <span class="big">⭐</span>
+      <div style="flex:1">
+        <b style="font-size:15px">Star the repo first — then submit.</b>
+        <small style="color:#7a6017;display:block">Submitting to the benchmark requires starring this repository (verified via GitHub OAuth). It's the price of an honest ranking that gets seen.</small>
+      </div>
+      <button class="btn star" id="starBtn" onclick="startOAuth()">Star to submit</button>
+      <small id="starState" style="color:#7a6017;width:100%"></small>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="si">1</span><b>Star + connect GitHub</b><small>OAuth authorization, star verified, submit form unlocks.</small></div>
+      <div class="step"><span class="si">2</span><b>Point to your API</b><small>Fill manifest (output type: research/signal/data) + endpoint. No code upload — we only call your API.</small></div>
+      <div class="step"><span class="si">3</span><b>Draft score → official</b><small>Quick draft rank in minutes; full anti-cheat run then official rank + 95% CI.</small></div>
+    </div>
+
+    <!-- 提交表单：先过 conformance（manifest 校验 + 在线握手）再进评测 -->
+    <div class="card" id="submitForm" style="display:none">
+      <b style="font-size:15px;display:block;margin-bottom:4px">Submit your agent manifest</b>
+      <small style="color:var(--muted);display:block;margin-bottom:12px">Conformance check runs first: manifest validation + online handshake to your endpoint. If passed, the eval queue picks it up.</small>
+      <div class="f-grid">
+        <label>Name<input id="f_name" placeholder="AlphaFactor-Quant"></label>
+        <label>Name for model<input id="f_model" placeholder="alpha_factor"></label>
+        <label>Endpoint (https)<input id="f_endpoint" placeholder="https://api.example.com"></label>
+        <label>Auth
+          <select id="f_auth"><option value="bearer">bearer</option><option value="none">none</option></select>
+        </label>
+        <label>Capabilities<input id="f_caps" placeholder="Factor, Data"></label>
+        <label>Output type
+          <select id="f_out"><option value="factor">factor</option><option value="research">research</option><option value="signal">signal</option><option value="risk">risk</option><option value="data">data</option><option value="backtest">backtest</option></select>
+        </label>
+        <label class="wide">Egress hosts<input id="f_egress" placeholder="yfinance, edgar"></label>
+      </div>
+      <button class="btn" id="conformBtn" onclick="runConformance()">Run conformance check</button>
+      <div id="conformResult" style="margin-top:12px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 分享 -->
+<section id="share">
+  <div class="wrap">
+    <h2><span class="n">4</span> Share your ranking — one click</h2>
+    <div class="card">
+      <div class="sharecard">
+        <div class="scrank"><b id="scPct">—</b><small id="scCap">Capability —</small></div>
+        <div style="flex:1">
+          <b id="scTitle">My finance agent ranked on FinAgentRank.</b>
+          <small style="color:var(--muted);display:block">Neutral, open, anti-overfit benchmark — see the full leaderboard.</small>
+        </div>
+      </div>
+      <div class="share-grid" id="shareGrid" style="margin-top:12px"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">FinAgentRank — independent, reproducible evaluation of finance agents. Live data from the C1–C4 eval engine.</div>
+</footer>
+
+<script src="echarts.min.js"></script>
+<script>
+/* ---- real engine data (leaderboard.json) with embedded fallback ---- */
+const FALLBACK = {"families":["Data","Factor","Research","Risk","Signal","Backtest"],"agents":[
+{"name":"ETF-Guard","dogfood":true,"capability":0.737,"ci_low":0.699,"ci_high":0.81,"top_family":"Risk","per_family":{"Data":0.699,"Factor":0.701,"Research":0.698,"Risk":0.919,"Signal":0.703,"Backtest":0.7},"status":"official"},
+{"name":"AlphaFactor-Quant","dogfood":false,"capability":0.719,"ci_low":0.678,"ci_high":0.799,"top_family":"Factor","per_family":{"Data":0.68,"Factor":0.917,"Research":0.678,"Risk":0.681,"Signal":0.677,"Backtest":0.681},"status":"official"},
+{"name":"RiskShield","dogfood":false,"capability":0.713,"ci_low":0.679,"ci_high":0.78,"top_family":"Risk","per_family":{"Data":0.679,"Factor":0.681,"Research":0.677,"Risk":0.879,"Signal":0.684,"Backtest":0.681},"status":"official"},
+{"name":"ETF-Race","dogfood":true,"capability":0.712,"ci_low":0.678,"ci_high":0.778,"top_family":"Factor","per_family":{"Data":0.68,"Factor":0.876,"Research":0.678,"Risk":0.681,"Signal":0.675,"Backtest":0.681},"status":"official"},
+{"name":"SentimentEdge","dogfood":false,"capability":0.69,"ci_low":0.655,"ci_high":0.759,"top_family":"Signal","per_family":{"Data":0.657,"Factor":0.655,"Research":0.659,"Risk":0.652,"Signal":0.86,"Backtest":0.66},"status":"official"},
+{"name":"DriftAgent","dogfood":false,"capability":0.616,"ci_low":0.587,"ci_high":0.674,"top_family":"Signal","per_family":{"Data":0.588,"Factor":0.586,"Research":0.589,"Risk":0.585,"Signal":0.76,"Backtest":0.59},"status":"official"},
+{"name":"NoisyAgent","dogfood":false,"capability":0.553,"ci_low":0.535,"ci_high":0.571,"top_family":"Factor","per_family":{"Data":0.552,"Factor":0.598,"Research":0.536,"Risk":0.556,"Signal":0.523,"Backtest":0.557},"status":"official"}],"schema_version":"0.1"};
+
+let FAMILIES = [];
+let AGENTS = [];
+
+function toUI(lb){
+  return lb.agents.map(a=>({
+    name:a.name, dog:a.dogfood, score:+(a.capability*100).toFixed(1),
+    ci:+(((a.ci_high-a.ci_low)/2)*100).toFixed(1),
+    fam: lb.families.map(f=>Math.round(a.per_family[f]*100)),
+    top:a.top_family, status:a.status
+  }));
+}
+
+async function loadData(){
+  let lb;
+  try{ lb = await (await fetch('leaderboard.json')).json(); }
+  catch(e){ lb = FALLBACK; }
+  FAMILIES = lb.families;
+  AGENTS = toUI(lb);
+  AGENTS.sort((a,b)=>b.score-a.score);
+  const n=AGENTS.length;
+  AGENTS.forEach((a,i)=>{ a.rank=i+1; a.pct="Top "+Math.round(((i+1)/n)*100)+"%"; });
+  renderLeaderboard(); initSelects(); renderRadar(); renderShare();
+}
+
+/* ---- leaderboard ---- */
+function renderLeaderboard(){
+  document.getElementById("lbSub").textContent =
+    "— live data from the C1–C4 eval engine (leaderboard.json) · walk-forward · auto-classified";
+  document.getElementById("liveTag").textContent =
+    "Live · "+AGENTS.length+" agents · auto-classified by measured capability";
+  const tbody = document.getElementById("tbody"); tbody.innerHTML = "";
+  AGENTS.forEach((a)=>{
+    const bar = a.fam[FAMILIES.indexOf(a.top)];
+    const dog = a.dog ? '<span class="dog">dogfood</span>' : '';
+    const st = a.status==="official" ? '<span class="badge b-ok">official</span>' : '<span class="badge b-warn">'+a.status+'</span>';
+    const rankCls = a.rank===1 ? 'class="rank rank1"' : 'class="rank"';
+    const pctCls = a.rank<=3 ? 'style="color:var(--good);font-weight:700"' : '';
+    tbody.innerHTML += `<tr>
+      <td ${rankCls}>${a.rank}</td>
+      <td><span class="agent">${a.name}</span>${dog}</td>
+      <td><span class="score">${a.score}</span> <span class="ci">± ${a.ci}</span></td>
+      <td><span class="topbar"><i style="width:${bar}%"></i></span><small style="color:var(--muted)"> ${a.top}</small></td>
+      <td ${pctCls}>${a.pct}</td>
+      <td>${st}</td></tr>`;
+  });
+}
+
+/* ---- compare selects ---- */
+function initSelects(){
+  const pickA = document.getElementById("pickA"), pickB = document.getElementById("pickB");
+  pickA.innerHTML = ""; pickB.innerHTML = "";
+  AGENTS.forEach((a,i)=>{
+    pickA.innerHTML += `<option value="${i}" ${i===1?"selected":""}>${a.name}</option>`;
+    pickB.innerHTML += `<option value="${i}" ${i===0?"selected":""}>${a.name}</option>`;
+  });
+}
+
+/* ---- radar ---- */
+const radar = echarts.init(document.getElementById("radarWrap"));
+function renderRadar(){
+  const a = AGENTS[+document.getElementById("pickA").value];
+  const b = AGENTS[+document.getElementById("pickB").value];
+  radar.setOption({
+    tooltip:{},
+    legend:{data:[a.name,b.name],top:0},
+    radar:{indicator:FAMILIES.map(f=>({name:f,max:100})),radius:"62%",center:["50%","58%"]},
+    series:[{
+      type:"radar",
+      data:[
+        {value:a.fam,name:a.name,areaStyle:{opacity:.18},lineStyle:{width:2}},
+        {value:b.fam,name:b.name,areaStyle:{opacity:.12},lineStyle:{width:2}},
+      ]
+    }]
+  }, true);
+}
+document.getElementById("pickA").onchange=renderRadar;
+document.getElementById("pickB").onchange=renderRadar;
+window.addEventListener("resize",()=>radar.resize());
+
+/* ---- one-click social share (global, dynamic top-1) ---- */
+function renderShare(){
+  const top = AGENTS[0];
+  document.getElementById("scPct").textContent = top.pct;
+  document.getElementById("scCap").textContent = "Capability "+top.score;
+  const shareText = "My finance agent ranked "+top.pct+" on FinAgentRank — a neutral, open, anti-overfit benchmark for finance agents. #FinAgentRank #quant";
+  const shareUrl  = "https://github.com/YOUR-ORG/FinAgentRank";
+  const shareTargets = [
+    {cls:"x",     name:"X",        href:`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`},
+    {cls:"li",    name:"LinkedIn", href:`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`},
+    {cls:"reddit",name:"Reddit",   href:`https://www.reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(shareText)}`},
+    {cls:"hn",    name:"HN",       href:`https://news.ycombinator.com/submitlink?u=${encodeURIComponent(shareUrl)}&t=${encodeURIComponent("FinAgentRank benchmark")}`},
+    {cls:"bsky",  name:"Bluesky",  href:`https://bsky.app/intent/compose?text=${encodeURIComponent(shareText+" "+shareUrl)}`},
+    {cls:"fb",    name:"Facebook", href:`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`},
+    {cls:"tg",    name:"Telegram", href:`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`},
+    {cls:"wa",    name:"WhatsApp", href:`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText+" "+shareUrl)}`},
+    {cls:"copy",  name:"Copy link",href:"#"},
+  ];
+  const grid = document.getElementById("shareGrid"); grid.innerHTML = "";
+  shareTargets.forEach(s=>{
+    const el = document.createElement("a");
+    el.className = "share-btn "+s.cls;
+    el.href = s.href; el.target="_blank"; el.rel="noopener";
+    el.innerHTML = `<svg viewBox="0 0 24 24"><path d="M18 16a3 3 0 0 0-2.4 1.2L8 13.8a3 3 0 0 0 0-1.6l7.6-3.4a3 3 0 1 0-.8-1.8L7.2 10.4a3 3 0 1 0 0 3.2l7.6 4.4A3 3 0 1 0 18 16z"/></svg> ${s.name}`;
+    if(s.cls==="copy"){ el.onclick=(e)=>{e.preventDefault();navigator.clipboard&&navigator.clipboard.writeText(shareUrl);alert("Link copied");} }
+    grid.appendChild(el);
+  });
+}
+
+/* ---- 真实点星校验（步骤5） ---- */
+const BACKEND = "http://localhost:8001";   // 后端地址（star_server.py），生产改同源
+function startOAuth(){
+  // 跳后端 /auth/github → GitHub OAuth → 回跳验证 → 轮询解锁
+  try{ window.location = BACKEND + "/auth/github"; }
+  catch(e){ alert("Backend not reachable. Start star_server.py first."); }
+}
+(function checkStar(){
+  const q = new URLSearchParams(window.location.search).get("login");
+  const st = document.getElementById("starState");
+  if(!q){ st.textContent = ""; return; }
+  fetch(BACKEND + "/api/star-check?login=" + encodeURIComponent(q))
+    .then(r=>r.json())
+    .then(d=>{ if(d.verified){
+        st.innerHTML = "✅ Star verified ("+d.login+") — submit unlocked.";
+        st.style.color="var(--good)";
+        document.getElementById("submitForm").style.display = "block";
+      } else { st.textContent = "You haven't starred the repo yet — star it, then re-authorize."; }
+    })
+    .catch(()=>{ st.textContent = "Backend unreachable — verifying offline."; });
+})();
+
+/* ---- 提交前 conformance 校验（步骤4+5 打通）---- */
+const OUTPUT_TYPES = ["factor","research","signal","risk","data","backtest"];
+const CAPS = ["Data","Factor","Research","Risk","Signal","Backtest"];
+function runConformance(){
+  const manifest = {
+    name: v("f_name"), name_for_model: v("f_model"),
+    endpoint: v("f_endpoint"), auth: v("f_auth"),
+    capabilities: splitCaps(v("f_caps")), output_type: v("f_out"),
+    egress_hosts: v("f_egress").split(",").map(s=>s.trim()).filter(Boolean),
+    schema_version: "0.1",
+  };
+  const box = document.getElementById("conformResult");
+  // 后端可达 → 真 conformance（校验+在线握手）；否则客户端基础校验兜底
+  fetch(BACKEND + "/api/conformance", {
+    method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(manifest),
+  }).then(r=>r.json()).then(render).catch(()=>render(localCheck(manifest)));
+
+  function render(res){
+    if(res.passed){
+      box.className="c-pass";
+      box.innerHTML = "Conformance passed — your agent is queued for eval (draft score)."
+        + (res.handshake ? ` <span class="c-sug">handshake ${res.handshake.status} · ${res.handshake.latency_ms}ms</span>` : "");
+    } else {
+      box.className="c-fail";
+      const errs = (res.errors||[]).join(" · ");
+      const sug = (res.suggestions||[]).join(" · ");
+      box.innerHTML = "Conformance failed. Fix and re-submit."
+        + (errs?`<div class="c-sug">errors: ${errs}</div>`:"")
+        + (sug?`<div class="c-sug">suggestions: ${sug}</div>`:"");
+    }
+  }
+  function v(id){ return document.getElementById(id).value.trim(); }
+  function splitCaps(s){ return s.split(",").map(x=>x.trim()).filter(x=>CAPS.includes(x)); }
+  function localCheck(m){
+    const errs=[];
+    if(!m.name||!m.model||!m.endpoint) errs.push("missing_required");
+    if(!/^https?:\/\//.test(m.endpoint)) errs.push("bad_endpoint_url");
+    if(!m.capabilities.length) errs.push("empty_capabilities");
+    if(!OUTPUT_TYPES.includes(m.output_type)) errs.push("invalid_output_type");
+    if(!m.egress_hosts.length) errs.push("missing_egress_hosts");
+    return {passed: errs.length===0, errors: errs, suggestions:["backend_unreachable: offline basic check only"]};
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>

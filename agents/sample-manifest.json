@@ -1,0 +1,10 @@
+{
+  "name": "AlphaFactor-Quant",
+  "name_for_model": "alpha_factor",
+  "endpoint": "https://alpha.example.com",
+  "auth": "bearer",
+  "capabilities": ["Factor", "Data"],
+  "output_type": "factor",
+  "egress_hosts": ["yfinance", "edgar"],
+  "schema_version": "0.1"
+}

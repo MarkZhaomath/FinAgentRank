@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+dist/
+build/
+
+# Node / web
+node_modules/
+web/_shots/
+
+# Env & secrets
+.env
+*.pem
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local artifacts
+*.log
+/tmp
