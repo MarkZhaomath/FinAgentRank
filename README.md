@@ -5,9 +5,12 @@
 > See where your finance agent actually ranks — not where it claims to.
 > No self-reported scores. No pay-to-rank. Just measured capability.
 
+**Live leaderboard:** <https://markzhaomath.github.io/FinAgentRank/>
+
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](#getting-started)
 ![Status](https://img.shields.io/badge/status-phase--1--benchmark-informational)
+[![Deploy](https://github.com/MarkZhaomath/FinAgentRank/actions/workflows/pages.yml/badge.svg)](https://github.com/MarkZhaomath/FinAgentRank/actions/workflows/pages.yml)
 
 ---
 
@@ -57,7 +60,7 @@ cd ../../web
 python3 -m http.server 8000    # open http://localhost:8000
 ```
 
-**Live leaderboard:** the site renders real engine output from `web/leaderboard.json`.
+**Live leaderboard:** <https://markzhaomath.github.io/FinAgentRank/> — renders real engine output from `web/leaderboard.json`, redeployed automatically on every push to `dev`.
 
 ---
 
