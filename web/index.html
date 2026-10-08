@@ -127,23 +127,23 @@
 
 <div class="hero">
   <div class="wrap">
-    <h1 class="display" data-i18n="hero_h1">The neutral referee for finance agents.</h1>
+    <h1 class="display" data-i18n="hero_h1">Made a finance agent? Wondering if it's any good? Bring it in — I'll score it.</h1>
     <p data-i18n="hero_p">Factor, research, risk, signal, backtest — everyone says theirs is best, and everyone self-reports.
-    FinAgentRank measures it: a closed, reproducible test set, walk-forward time-splitting, statistical
-    confidence, and auto-classification by <em>measured</em> capability. No pay-to-rank. Ever.</p>
+    This is just a small open-source test I put together: a closed test set, walk-forward no-lookahead, confidence
+    intervals, auto-classification by measured capability. Free, no pay-to-rank. That's all — no grand claims.</p>
     <div class="hero-cta">
       <a class="btn" href="#leaderboard" data-i18n="cta_lb">See the leaderboard</a>
       <a class="btn ghost" href="#submit" data-i18n="cta_submit">Submit your agent</a>
     </div>
-    <span class="tag" data-i18n="tag">⭐ Star to submit &nbsp;·&nbsp; Anti-overfit walk-forward &nbsp;·&nbsp; Auto-classified by capability</span>
+    <span class="tag" data-i18n="tag">⭐ Star to submit &nbsp;·&nbsp; Walk-forward no-lookahead &nbsp;·&nbsp; Auto-classified by capability</span>
     <div class="livedata" id="liveTag"></div>
   </div>
 </div>
 
-<!-- 信任区：为什么可信 -->
+<!-- 方法区：我们怎么测的 -->
 <section id="why">
   <div class="wrap">
-    <h2 data-i18n="why_h2">Why a benchmark you can trust</h2>
+    <h2 data-i18n="why_h2">Here's how we measure (check it yourself — it's open source)</h2>
     <div class="trust">
       <div class="trust-row"><div class="tk"><b data-i18n="t_secret">Secret test set, hash-fingerprinted</b><span data-i18n="t_secret_d">Dev set is public; the held-out secret set is closed (HMAC-SHA256). Cloning gives you the shell, not the truth.</span></div></div>
       <div class="trust-row"><div class="tk"><b data-i18n="t_walk">Walk-forward, no lookahead</b><span data-i18n="t_walk_d">Scores are computed strictly out-of-sample. Overfitting the public dev set shows up here — that's the point.</span></div></div>
@@ -191,25 +191,21 @@
     <div class="star-gate">
       <span class="big">⭐</span>
       <div style="flex:1">
-        <b style="font-size:15px" data-i18n="star_title">Star the repo first — then submit.</b>
-        <small style="color:#7a6017;display:block" data-i18n="star_desc">Submitting to the benchmark requires starring this repository (verified via GitHub OAuth). It's the price of an honest ranking that gets seen.</small>
+        <b style="font-size:15px" data-i18n="star_title">Enjoyed it? A star helps keep this free. (Not required — submit either way.)</b>
+        <small style="color:#7a6017;display:block" data-i18n="star_desc">It's a small open-source project — a ⭐ keeps it visible and running. But please, don't let it stop you from submitting.</small>
       </div>
-      <button class="btn star" id="starBtn" onclick="startStar()" data-i18n="star_btn">Star to submit</button>
-      <small id="starState" style="color:#7a6017;width:100%"></small>
-      <div id="starConfirm" style="display:none;width:100%">
-        <button class="btn star" onclick="confirmStar()" data-i18n="star_done">I've starred — continue</button>
-      </div>
+      <a class="btn ghost" href="https://github.com/MarkZhaomath/FinAgentRank" target="_blank" data-i18n="star_btn">⭐ Star the repo</a>
     </div>
     <div class="steps">
-      <div class="step"><span class="si">1</span><b data-i18n="step1_t">Star + connect GitHub</b><small data-i18n="step1_d">OAuth authorization, star verified, submit form unlocks.</small></div>
-      <div class="step"><span class="si">2</span><b data-i18n="step2_t">Point to your API</b><small data-i18n="step2_d">Fill manifest (output type: research/signal/data) + endpoint. No code upload — we only call your API.</small></div>
-      <div class="step"><span class="si">3</span><b data-i18n="step3_t">Draft score → official</b><small data-i18n="step3_d">Quick draft rank in minutes; full anti-cheat run then official rank + 95% CI.</small></div>
+      <div class="step"><span class="si">1</span><b data-i18n="step1_t">Fill in your agent</b><small data-i18n="step1_d">Name, endpoint (https), capabilities, output type. That's it — no code upload, we only call your API.</small></div>
+      <div class="step"><span class="si">2</span><b data-i18n="step2_t">Quick check</b><small data-i18n="step2_d">We validate your manifest right here in the browser — catch mistakes before you submit.</small></div>
+      <div class="step"><span class="si">3</span><b data-i18n="step3_t">Submit → get a score</b><small data-i18n="step3_d">One click opens a pre-filled GitHub issue. We run the eval and reply with your draft score + rank.</small></div>
     </div>
 
-    <!-- 提交表单：先过 conformance（manifest 校验 + 在线握手）再进评测 -->
-    <div class="card" id="submitForm" style="display:none">
+    <!-- 提交表单：直接可用，不过门槛 -->
+    <div class="card" id="submitForm">
       <b style="font-size:15px;display:block;margin-bottom:4px" data-i18n="form_title">Submit your agent manifest</b>
-      <small style="color:var(--muted);display:block;margin-bottom:12px" data-i18n="form_desc">Conformance check runs first: manifest validation + online handshake to your endpoint. If passed, the eval queue picks it up.</small>
+      <small style="color:var(--muted);display:block;margin-bottom:12px" data-i18n="form_desc">Fill this in, run the check, and submit — that's it.</small>
       <div class="f-grid">
         <label data-i18n="f_name">Name<input id="f_name" placeholder="AlphaFactor-Quant"></label>
         <label data-i18n="f_model">Name for model<input id="f_model" placeholder="alpha_factor"></label>
@@ -247,7 +243,7 @@
 </section>
 
 <footer>
-  <div class="wrap" data-i18n="ft">FinAgentRank — independent, reproducible evaluation of finance agents. Live data from the C1–C4 eval engine.</div>
+  <div class="wrap" data-i18n="ft">FinAgentRank — measure your finance agent. Open source, free, no pay-to-rank. Live data from the C1–C4 eval engine.</div>
 </footer>
 
 <script src="echarts.min.js"></script>
@@ -293,13 +289,12 @@ function renderLeaderboard(){
   const tbody = document.getElementById("tbody"); tbody.innerHTML = "";
   AGENTS.forEach((a)=>{
     const bar = a.fam[FAMILIES.indexOf(a.top)];
-    const dog = a.dog ? '<span class="dog">dogfood</span>' : '';
     const st = a.status==="official" ? '<span class="badge b-ok">'+t("st_official")+'</span>' : '<span class="badge b-warn">'+a.status+'</span>';
     const rankCls = a.rank===1 ? 'class="rank rank1"' : 'class="rank"';
     const pctCls = a.rank<=3 ? 'style="color:var(--good);font-weight:700"' : '';
     tbody.innerHTML += `<tr>
       <td ${rankCls}>${a.rank}</td>
-      <td><span class="agent">${a.name}</span>${dog}</td>
+      <td><span class="agent">${a.name}</span></td>
       <td><span class="score">${a.score}</span> <span class="ci">± ${a.ci}</span></td>
       <td><span class="topbar"><i style="width:${bar}%"></i></span><small style="color:var(--muted)"> ${a.top}</small></td>
       <td ${pctCls}>${a.pct}</td>
@@ -368,21 +363,10 @@ function renderShare(){
   });
 }
 
-/* ---- 点星即投（零服务器，发布可跑） ---- */
-/* 渠道：点星 → 仓库 star 页；提交 → 预填 GitHub Issue（即投递通道，维护端人工接单评测） */
+/* ---- 提交（零门槛）---- */
+/* 渠道：填 manifest → 本地校验 → 预填 GitHub Issue（即投递通道，维护端人工接单评测） */
 const REPO_URL  = "https://github.com/MarkZhaomath/FinAgentRank";
 const ISSUE_URL = REPO_URL + "/issues/new";
-function startStar(){
-  window.open(REPO_URL, "_blank");
-  document.getElementById("starState").textContent = t("star_todo");
-  document.getElementById("starConfirm").style.display = "block";
-}
-function confirmStar(){
-  document.getElementById("starState").innerHTML = t("star_ok_local");
-  document.getElementById("starState").style.color = "var(--good)";
-  document.getElementById("submitForm").style.display = "block";
-  document.getElementById("starConfirm").style.display = "none";
-}
 
 /* ---- 提交前 conformance 校验（客户端）→ 通过后以 Issue 提交 ---- */
 const OUTPUT_TYPES = ["factor","research","signal","risk","data","backtest"];
@@ -438,13 +422,13 @@ const I18N = {
   nav_cmp:{en:"Compare",zh:"对比",ja:"比較",es:"Comparar",pt:"Comparar"},
   nav_sub:{en:"Submit",zh:"提交",ja:"投稿",es:"Enviar",pt:"Submeter"},
   nav_share:{en:"Share",zh:"分享",ja:"共有",es:"Compartir",pt:"Partilhar"},
-  hero_h1:{en:"The neutral referee for finance agents.",zh:"金融 Agent 的中立裁判。",ja:"金融エージェントの中立な審判。",es:"El árbitro neutral de los agentes financieros.",pt:"O árbitro neutro dos agentes financeiros."},
-  hero_p:{en:"Factor, research, risk, signal, backtest — everyone says theirs is best, and everyone self-reports. FinAgentRank measures it: a closed, reproducible test set, walk-forward time-splitting, statistical confidence, and auto-classification by measured capability. No pay-to-rank. Ever.",zh:"因子、研报、风控、信号、回测——人人都说自己的最好，又都在自报成绩。FinAgentRank 用实测说话：封闭可复现测试集、时序切分防前视、统计置信区间、按实测能力自动分类。永远没有付费上榜。",ja:"因子・リサーチ・リスク・シグナル・バックテスト——誰もが自分の最強を主張し、みな自己申告する。FinAgentRank は実測で語る：非公開の再現可能なテストセット、未来情報を排除した時系列分割、統計的区間推定、実測能力による自動分類。有料ランクアップは一切なし。",es:"Factor, research, risk, signal, backtest — todos dicen que el suyo es el mejor, y todos se auto-reportan. FinAgentRank lo mide: test set cerrado y reproducible, partición temporal walk-forward, intervalo de confianza, y clasificación automática por capacidad medida. Nunca pagas por escalar.",pt:"Factor, research, risk, signal, backtest — todos dizem que o seu é o melhor e todos se auto-reportam. FinAgentRank mede: test set fechado e reproduzível, particionamento temporal walk-forward, intervalo de confiança e classificação automática por capacidade medida. Nunca se paga para subir no ranking."},
+  hero_h1:{en:"Made a finance agent? Wondering if it's any good? Bring it in — I'll score it.",zh:"做了个金融 Agent？想知道它到底啥水平？拿过来，我给你跑个分。",ja:"金融エージェントを作った？実力が知りたい？投げ込めば、採点してあげる。",es:"¿Hiciste un agente financiero? ¿No sabes si es bueno? Tráelo — lo puntúo.",pt:"Fez um agente financeiro? Quer saber se é bom? Traga-o — eu avalio."},
+  hero_p:{en:"Factor, research, risk, signal, backtest — everyone says theirs is best, and everyone self-reports. This is just a small open-source test I put together: a closed test set, walk-forward no-lookahead, confidence intervals, auto-classification by measured capability. Free, no pay-to-rank. That's all — no grand claims.",zh:"因子、研报、风控、信号、回测——人人都说自己的最好，又都在自报成绩。这不过是我搭的一个小开源测试：封闭测试集、时序切分防前视、置信区间、按实测能力自动分类。免费、不收钱。就这些，不吹牛。",ja:"因子・リサーチ・リスク・シグナル・バックテスト——誰もが最強を主張し、みな自己申告する。これは私が作った小さなオープンソースのテスト：非公開テストセット、未来情報を排除した時系列分割、信頼区間、実測能力による自動分類。無料・有料ランクなし。それだけ——大げさな主張はない。",es:"Factor, research, risk, signal, backtest — todos dicen que el suyo es el mejor, y todos se auto-reportan. Esto es solo una pequeña prueba de código abierto que armé: test set cerrado, walk-forward sin lookahead, intervalo de confianza, clasificación por capacidad medida. Gratis, sin pago por escalar. Eso es todo — sin grandes promesas.",pt:"Factor, research, risk, signal, backtest — todos dizem que o seu é o melhor e todos se auto-reportam. Isto é só um pequeno teste de código aberto que montei: test set fechado, walk-forward sem lookahead, intervalo de confiança, classificação por capacidade medida. Grátis, sem pagar para subir. Só isso — sem grandes promessas."},
   cta_lb:{en:"See the leaderboard",zh:"查看榜单",ja:"ランキングを見る",es:"Ver el ranking",pt:"Ver o ranking"},
   cta_submit:{en:"Submit your agent",zh:"提交你的 Agent",ja:"エージェントを投稿",es:"Envía tu agente",pt:"Submeta o seu agente"},
   tag:{en:"⭐ Star to submit · Anti-overfit walk-forward · Auto-classified by capability",zh:"⭐ 点星即可投榜 · 防过拟合时序切分 · 按实测能力自动分类",ja:"⭐ スターで投稿 · 過学習防止の時系列分割 · 実測能力で自動分類",es:"⭐ Marca estrella para enviar · walk-forward anti-overfit · clasificado por capacidad",pt:"⭐ Dê a estrela para submeter · walk-forward anti-overfit · classificado por capacidade"},
   live:{en:"Live · {n} agents · auto-classified by measured capability",zh:"实时 · {n} 个 Agent · 按实测能力自动分类",ja:"リアルタイム · {n} エージェント · 実測能力で自動分類",es:"En vivo · {n} agentes · clasificados por capacidad medida",pt:"Ao vivo · {n} agentes · classificados por capacidade medida"},
-  why_h2:{en:"Why a benchmark you can trust",zh:"为什么这份测评可信",ja:"信頼できるベンチマークの理由",es:"Por qué un benchmark confiable",pt:"Por que um benchmark confiável"},
+  why_h2:{en:"Here's how we measure (check it yourself — it's open source)",zh:"我们怎么测的（源码开源，你可自查）",ja:"測り方（ソースはオープン、自分で確認できる）",es:"Cómo medimos (el código es abierto — compruébalo)",pt:"Como medimos (o código é aberto — pode verificar)"},
   t_secret:{en:"Secret test set, hash-fingerprinted",zh:"保密测试集 + 哈希指纹",ja:"非公開テストセット＋ハッシュ指紋",es:"Test set secreto con hash",pt:"Test set secreto com hash"},
   t_secret_d:{en:"Dev set is public; the held-out secret set is closed (HMAC-SHA256). Cloning gives you the shell, not the truth.",zh:"开发集公开；保密测试集封闭（HMAC-SHA256）。克隆代码只得到外壳，得不到真值。",ja:"開発セットは公開、保留された秘密セットは非公開（HMAC-SHA256）。クローンでは真実は得られない。",es:"El dev set es público; el secreto está cerrado (HMAC-SHA256). Clonar te da la cáscara, no la verdad.",pt:"O dev set é público; o secreto é fechado (HMAC-SHA256). Clonar dá a casca, não a verdade."},
   t_walk:{en:"Walk-forward, no lookahead",zh:"时序切分，杜绝前视",ja:"未来情報なしの時系列分割",es:"Walk-forward sin lookahead",pt:"Walk-forward sem lookahead"},
@@ -470,21 +454,18 @@ const I18N = {
   agentA:{en:"Agent A",zh:"Agent A",ja:"Agent A",es:"Agente A",pt:"Agente A"},
   agentB:{en:"Agent B",zh:"Agent B",ja:"Agent B",es:"Agente B",pt:"Agente B"},
   sub_h2:{en:"Submit your agent",zh:"提交你的 Agent",ja:"エージェントを投稿",es:"Envía tu agente",pt:"Submeta o seu agente"},
-  star_title:{en:"Star the repo first — then submit.",zh:"先点星，再提交。",ja:"先にスター、それから投稿。",es:"Marca la estrella primero — luego envía.",pt:"Dê a estrela primeiro — depois submeta."},
-  star_desc:{en:"Submitting to the benchmark requires starring this repository (verified via GitHub OAuth). It's the price of an honest ranking that gets seen.",zh:"参与测评需先给本仓库点星（经 GitHub OAuth 校验）。这是让排名被看见、且保持诚实的代价。",ja:"投稿にはこのリポジトリへのスターが必要（GitHub OAuthで確認）。見られる正直な順位の代償だ。",es:"Enviar requiere marcar la estrella del repo (verificado vía GitHub OAuth). Es el precio de un ranking honesto que se ve.",pt:"Submeter requer dar a estrela ao repositório (verificado via GitHub OAuth). É o preço de um ranking honesto que é visto."},
-  star_btn:{en:"Star to submit",zh:"点星提交",ja:"スターで投稿",es:"Estrella para enviar",pt:"Estrela para submeter"},
-  star_done:{en:"I've starred — continue",zh:"我已点星，继续",ja:"スター済み——続行",es:"Ya marqué — continuar",pt:"Já dei a estrela — continuar"},
-  star_todo:{en:"Open the repo and click the ⭐ Star button, then come back and continue.",zh:"在新打开的仓库页点一下 ⭐ Star，然后回来点继续。",ja:"開いたリポジトリで⭐スターを押して、戻って続行してください。",es:"Abre el repo y haz clic en ⭐ Star, luego vuelve y continúa.",pt:"Abra o repositório, clique em ⭐ Star e depois volte para continuar."},
-  star_ok_local:{en:"✅ Star noted — submit unlocked.",zh:"✅ 已记录点星——可提交。",ja:"✅ スター記録済み——投稿可能。",es:"✅ Estrella anotada — envío desbloqueado.",pt:"✅ Estrela anotada — submissão liberada."},
+  star_title:{en:"Enjoyed it? A star helps keep this free. (Not required — submit either way.)",zh:"觉得有用？点个星让它能一直免费跑。（非必需——不点也照常提交）",ja:"気に入った？スターで無料のまま続けられる。（必須ではない——なくても投稿OK）",es:"¿Te gusta? Una estrella ayuda a que siga gratis. (No es obligatorio — envía igual).",pt:"Gostou? Uma estrela ajuda a manter grátis. (Não é obrigatório — submeta mesmo assim)."},
+  star_desc:{en:"It's a small open-source project — a ⭐ keeps it visible and running. But please, don't let it stop you from submitting.",zh:"这是个小小的开源项目——一个 ⭐ 就能让它被更多人看见、继续跑。但千万别因为没点星就不提交。",ja:"小さなオープンソースプロジェクト——スターで見える化し続けられる。でも、投稿を止めないで。",es:"Es un pequeño proyecto de código abierto — una ⭐ lo mantiene visible y vivo. Pero no dejes que eso te detenga para enviar.",pt:"É um pequeno projeto de código aberto — uma ⭐ mantém-no visível e ativo. Mas não deixe que isso o impeça de submeter."},
+  star_btn:{en:"⭐ Star the repo",zh:"⭐ 给仓库点星",ja:"⭐ スターを付ける",es:"⭐ Estrella el repo",pt:"⭐ Dê a estrela"},
   submit_issue:{en:"Submit on GitHub",zh:"到 GitHub 提交",ja:"GitHubで投稿",es:"Enviar en GitHub",pt:"Submeter no GitHub"},
-  step1_t:{en:"Star + connect GitHub",zh:"点星 + 连接 GitHub",ja:"スター＋GitHub接続",es:"Estrella + conectar GitHub",pt:"Estrela + conectar GitHub"},
-  step1_d:{en:"OAuth authorization, star verified, submit form unlocks.",zh:"OAuth 授权，校验点星，解锁提交表单。",ja:"OAuth認証でスター確認、投稿フォーム解放。",es:"Autorización OAuth, estrella verificada, formulario desbloqueado.",pt:"Autorização OAuth, estrela verificada, formulário liberado."},
-  step2_t:{en:"Point to your API",zh:"指向你的 API",ja:"APIを指定",es:"Apunta a tu API",pt:"Aponte para a sua API"},
-  step2_d:{en:"Fill manifest (output type: research/signal/data) + endpoint. No code upload — we only call your API.",zh:"填 manifest（输出类型）+ 端点。不传代码——我们只调用你的 API。",ja:"マニフェスト（出力型）+エンドポイントを記入。コードは不要——APIを呼ぶだけ。",es:"Completa el manifest (output type) + endpoint. Sin subir código — solo llamamos tu API.",pt:"Preencha o manifest (output type) + endpoint. Sem enviar código — apenas chamamos a sua API."},
-  step3_t:{en:"Draft score → official",zh:"草稿分 → 正式分",ja:"草稿スコア→公式",es:"Borrador → oficial",pt:"Rascunho → oficial"},
-  step3_d:{en:"Quick draft rank in minutes; full anti-cheat run then official rank + 95% CI.",zh:"几分钟出草稿分；跑完防作弊后出正式排名 + 95% 置信区间。",ja:"数分で草稿スコア。チート防止を経て公式順位＋95%信頼区間。",es:"Borrador en minutos; tras anti-cheat, ranking oficial + CI 95%.",pt:"Rascunho em minutos; após anti-cheat, ranking oficial + IC 95%."},
+  step1_t:{en:"Fill in your agent",zh:"填写你的 Agent",ja:"エージェントを記入",es:"Completa tu agente",pt:"Preencha o seu agente"},
+  step1_d:{en:"Name, endpoint (https), capabilities, output type. That's it — no code upload, we only call your API.",zh:"填名称、端点（https）、能力、输出类型，就这些——不用传代码，我们只调你的 API。",ja:"名前・エンドポイント（https）・能力・出力型だけ。コード不要——APIを呼ぶだけ。",es:"Nombre, endpoint (https), capacidades, tipo de salida. Eso es todo — sin subir código, solo llamamos tu API.",pt:"Nome, endpoint (https), capacidades, tipo de saída. Só isso — sem enviar código, apenas chamamos a sua API."},
+  step2_t:{en:"Quick check",zh:"快速校验",ja:"クイックチェック",es:"Chequeo rápido",pt:"Verificação rápida"},
+  step2_d:{en:"We validate your manifest right here in the browser — catch mistakes before you submit.",zh:"在浏览器里直接校验你的 manifest——提交前就能发现错误。",ja:"ブラウザ上でマニフェストを検証——投稿前にミスを発見。",es:"Validamos tu manifest aquí en el navegador — detecta errores antes de enviar.",pt:"Validamos o seu manifest aqui no navegador — detete erros antes de submeter."},
+  step3_t:{en:"Submit → get a score",zh:"提交 → 出分",ja:"投稿 → スコア",es:"Enviar → puntuación",pt:"Submeter → pontuação"},
+  step3_d:{en:"One click opens a pre-filled GitHub issue. We run the eval and reply with your draft score + rank.",zh:"一键打开预填好的 GitHub issue。我们跑评测，回你草稿分 + 排名。",ja:"ワンクリックでプレフィル済みGitHub Issueを開く。評価を実行し、草稿スコア＋順位を返す。",es:"Un clic abre un issue prefabricado. Corremos la eval y te damos tu puntuación + ranking.",pt:"Um clique abre um issue pré-preenchido. Corremos a avaliação e damos-lhe a pontuação + ranking."},
   form_title:{en:"Submit your agent manifest",zh:"提交 Agent 的 manifest",ja:"マニフェストを投稿",es:"Envía el manifest",pt:"Submeta o manifest"},
-  form_desc:{en:"Conformance check runs first: manifest validation + online handshake to your endpoint. If passed, the eval queue picks it up.",zh:"先跑 conformance 校验：manifest 校验 + 与你的端点在线握手。通过后进入评测队列。",ja:"まず適合性チェック：マニフェスト検証＋エンドポイントへのハンドシェイク。通過で評価キューへ。",es:"Primero conformance: validación + handshake a tu endpoint. Si pasa, entra en la cola de eval.",pt:"Primeiro o conformance: validação + handshake ao seu endpoint. Se passar, entra na fila de avaliação."},
+  form_desc:{en:"Fill this in, run the check, and submit — that's it.",zh:"填好、校验、提交——就这三步。",ja:"記入、チェック、投稿——それだけ。",es:"Completa, verifica y envía — eso es todo.",pt:"Preencha, verifique e submeta — só isso."},
   f_name:{en:"Name",zh:"名称",ja:"名前",es:"Nombre",pt:"Nome"},
   f_model:{en:"Name for model",zh:"模型名",ja:"モデル名",es:"Nombre para modelo",pt:"Nome para modelo"},
   f_endpoint:{en:"Endpoint (https)",zh:"端点（https）",ja:"エンドポイント（https）",es:"Endpoint (https)",pt:"Endpoint (https)"},
@@ -497,16 +478,15 @@ const I18N = {
   conf_fail:{en:"Conformance failed. Fix and re-submit.",zh:"Conformance 未通过，请修正后重新提交。",ja:"適合性NG。修正して再投稿。",es:"Conformance falló. Corrige y reenvía.",pt:"Conformance falhou. Corrija e reenvie."},
   errors:{en:"errors",zh:"错误",ja:"エラー",es:"errores",pt:"erros"},
   suggestions:{en:"suggestions",zh:"建议",ja:"提案",es:"sugerencias",pt:"sugestões"},
-  star_ok:{en:"✅ Star verified ({login}) — submit unlocked.",zh:"✅ 点星已确认（{login}）——可提交。",ja:"✅ スター確認済み（{login}）——投稿可能。",es:"✅ Estrella verificada ({login}) — envío desbloqueado.",pt:"✅ Estrela verificada ({login}) — submissão liberada."},
   star_no:{en:"You haven't starred the repo yet — star it, then re-authorize.",zh:"你还没给仓库点星——请先点星，再重新授权。",ja:"まだスターしていません——スターして再認証を。",es:"Aún no has dado estrella — hazlo y re-autoriza.",pt:"Ainda não deu a estrela — dê e reautorize."},
   star_offline:{en:"Backend unreachable — verifying offline.",zh:"后端不可达——离线校验中。",ja:"バックエンド不可達——オフライン確認中。",es:"Backend inaccesible — verificando offline.",pt:"Backend inacessível — verificando offline."},
   cap:{en:"Capability",zh:"能力分",ja:"能力値",es:"Capacidad",pt:"Capacidade"},
   share_h2:{en:"Share your ranking — one click",zh:"一键分享你的排名",ja:"ワンクリックで順位共有",es:"Comparte tu ranking — un clic",pt:"Partilhe o seu ranking — um clique"},
   share_title:{en:"My finance agent ranked on FinAgentRank.",zh:"我的金融 Agent 在 FinAgentRank 上榜了。",ja:"私の金融エージェントがFinAgentRankにランクイン。",es:"Mi agente financiero clasificó en FinAgentRank.",pt:"O meu agente financeiro classificou no FinAgentRank."},
-  share_desc:{en:"Neutral, open, anti-overfit benchmark — see the full leaderboard.",zh:"中立、开源、防过拟合测评——查看完整榜单。",ja:"中立・オープン・過学習防止ベンチマーク——完全ランキングはこちら。",es:"Benchmark neutral, abierto y anti-overfit — ve el ranking completo.",pt:"Benchmark neutro, aberto e anti-overfit — veja o ranking completo."},
-  share_text:{en:"My finance agent ranked {pct} on FinAgentRank — a neutral, open, anti-overfit benchmark for finance agents. #FinAgentRank #quant",zh:"我的金融 Agent 在 FinAgentRank 进入 {pct} ——中立开源防过拟合的金融 Agent 测评。#FinAgentRank",ja:"私の金融エージェントがFinAgentRankで{pct}にランクイン——金融向け中立・オープン・過学習防止ベンチマーク。#FinAgentRank",es:"Mi agente financiero clasificó {pct} en FinAgentRank — un benchmark neutral, abierto y anti-overfit. #FinAgentRank",pt:"O meu agente financeiro classificou {pct} no FinAgentRank — um benchmark neutro, aberto e anti-overfit. #FinAgentRank"},
+  share_desc:{en:"Open, free, anti-overfit benchmark — see the full leaderboard.",zh:"开源、免费、防过拟合测评——查看完整榜单。",ja:"オープン・無料・過学習防止ベンチマーク——完全ランキングはこちら。",es:"Benchmark abierto, gratis y anti-overfit — ve el ranking completo.",pt:"Benchmark aberto, grátis e anti-overfit — veja o ranking completo."},
+  share_text:{en:"My finance agent ranked {pct} on FinAgentRank — an open, free, anti-overfit benchmark for finance agents. #FinAgentRank #quant",zh:"我的金融 Agent 在 FinAgentRank 进入 {pct} ——开源免费防过拟合的金融 Agent 测评。#FinAgentRank",ja:"私の金融エージェントがFinAgentRankで{pct}にランクイン——金融向けオープン・無料・過学習防止ベンチマーク。#FinAgentRank",es:"Mi agente financiero clasificó {pct} en FinAgentRank — un benchmark abierto, gratis y anti-overfit. #FinAgentRank",pt:"O meu agente financeiro classificou {pct} no FinAgentRank — um benchmark aberto, grátis e anti-overfit. #FinAgentRank"},
   copy_link:{en:"Copy link",zh:"复制链接",ja:"リンクをコピー",es:"Copiar enlace",pt:"Copiar link"},
-  ft:{en:"FinAgentRank — independent, reproducible evaluation of finance agents. Live data from the C1–C4 eval engine.",zh:"FinAgentRank —— 独立、可复现的金融 Agent 测评。数据来自 C1–C4 评测引擎。",ja:"FinAgentRank——金融エージェントの独立・再現可能な評価。C1–C4評価エンジンのリアルデータ。",es:"FinAgentRank — evaluación independiente y reproducible de agentes financieros. Datos del motor C1–C4.",pt:"FinAgentRank — avaliação independente e reproduzível de agentes financeiros. Dados do motor C1–C4."}
+  ft:{en:"FinAgentRank — measure your finance agent. Open source, free, no pay-to-rank. Live data from the C1–C4 eval engine.",zh:"FinAgentRank —— 测一测你的金融 Agent。开源、免费、不收钱。数据来自 C1–C4 评测引擎。",ja:"FinAgentRank——金融エージェントを測る。オープンソース・無料・有料ランクなし。C1–C4評価エンジンのデータ。",es:"FinAgentRank — mide tu agente financiero. Open source, gratis, sin pago por escalar. Datos del motor C1–C4.",pt:"FinAgentRank — meça o seu agente financeiro. Open source, grátis, sem pagar para subir. Dados do motor C1–C4."}
 };
 let LANG = "en";
 function t(key){ return (I18N[key] && I18N[key][LANG]) || (I18N[key] && I18N[key].en) || key; }
