@@ -1,42 +1,105 @@
-# FinAgentRank · Web（静态榜站 · 工作版 v0）
+# FinAgentRank
 
-> 一期开源的**前端界面**：纯静态 HTML + ECharts，零构建、零依赖，clone 下来一句命令跑出漂亮榜站。
-> 目标客户群：全世界（界面英文、社媒分享全球向）。
+**A neutral, reproducible, anti-overfit benchmark for finance agents.**
 
-## 运行（任选其一）
+> See where your finance agent actually ranks — not where it claims to.
+> No self-reported scores. No pay-to-rank. Just measured capability.
 
-    cd FinAgentRank-web
-    python3 -m http.server 8000
-    # 浏览器打开 http://localhost:8000
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](#getting-started)
+![Status](https://img.shields.io/badge/status-phase--1--benchmark-informational)
 
-或直接双击 `index.html`（数据已内嵌，无需 fetch）。
+---
 
-## 已实现（真实数据 · 引擎直连）
+## Why we built this
 
-1. **榜单主页（真实分）**：`leaderboard.json`（C1–C4 评测引擎输出）→ 能力分 ± 95% CI + Top % 分位 + 能力族强度条 + 自动分类（top_family）+ official 状态。不再用 mock。
-2. **对比**：ECharts 雷达，选 2 个 Agent 对比 6 能力族画像（真实 per_family）。
-3. **提交流程（强制点星·真实校验）**：Star to submit → 后端 `/auth/github` GitHub OAuth → `/user/starred/{repo}` 真校验 → 前端轮询 `/api/star-check` 解锁（后端 `FinAgentRank/src/finagentrank/star_server.py`，默认 `http://localhost:8001`）。
-4. **一键社媒分享（全球向）**：X / LinkedIn / Reddit / Hacker News / Bluesky / Facebook / Telegram / WhatsApp / 复制链接 + Open Graph 卡片；分享文案动态取当前第 1 名。
+Finance AI is fragmenting fast. Indie developers and small quant teams are shipping agents for
+factors, research, risk, signals, and backtesting — and everyone says theirs is the best. But nobody
+can tell you which one is *actually* good, because **everyone self-reports**.
 
-## 数据来源
+FinAgentRank is the neutral referee: a controlled, reproducible test set with walk-forward
+time-splitting, statistical confidence intervals, anti-cheat gates, and **auto-classification by
+measured capability** — not by what a developer *claims*.
 
-- `leaderboard.json` = `FinAgentRank` 评测引擎（C1–C4 + walk-forward + 自动分类）的真实输出，同目录随引擎重跑更新。
-- 前端 fetch `leaderboard.json`；若 file:// 打开 fetch 失败，自动用内嵌兜底（同一份真实数据）。
+**The hook:** *Submit your agent, get an instant draft score, see where you stand — and share your
+rank.*
 
-## 技术要点
+---
 
-- `echarts.min.js` 已本地 vendor（1MB），clone 后离线可跑。
-- 榜单数据来自真实评测引擎 JSON；引擎重跑后替换 `leaderboard.json` 即可刷新榜单。
-- 同份静态前端可原样打包为 Hugging Face Space 上线（带提交通道）。
+## What makes it trustworthy
 
-## 结构
+| Mechanism | What it means |
+| --- | --- |
+| **Secret test set, hash-fingerprinted** | The dev set is public; the held-out **secret set is closed** (HMAC-SHA256). Anti-tamper, anti-copy, and proof a real ground truth exists. Cloning the repo gives you the shell, not the truth. |
+| **Walk-forward time-splitting** | No lookahead. Scores are computed strictly out-of-sample. |
+| **Statistical confidence** | Bootstrap 95% CI per score. CI overlap = tie — no false "#1". |
+| **Auto-classification** | We classify each agent by *measured* performance, not by what you claim. Declared intent is input; measured `top_family` wins. |
+| **Anti-cheat, four gates** | Submission rate-limit · draft→official two-stage · identity clustering (merges sock-puppet accounts) · time isolation + rotating seed. |
+| **No pay-to-rank, ever** | Ranking is by measured capability + confidence only. That's the whole point. |
 
-    FinAgentRank-web/
-      index.html          # 榜站单页（榜单 + 对比 + 提交 + 分享）
-      leaderboard.json    # 评测引擎真实输出（fetch 数据源）
-      echarts.min.js      # 本地 ECharts（离线）
-      README.md
+---
 
-## 将来 GitHub 建仓后一键推送
+## Get started
 
-    git add -A && git commit -m "批次-FinAgentRank-web 榜单接入引擎真实分" && git push --set-upstream origin dev
+```bash
+git clone https://github.com/MarkZhaomath/FinAgentRank.git
+cd FinAgentRank
+
+# run the evaluation engine
+cd src/finagentrank
+python run_demo.py     # C1–C4 capability scores + auto-classification
+python run_step2.py    # dataset split + hashing + anti-cheat
+python run_step3.py    # SCORING formal rules
+python run_step4.py    # conformance (manifest + handshake)
+
+# view the leaderboard
+cd ../../web
+python3 -m http.server 8000    # open http://localhost:8000
+```
+
+**Live leaderboard:** the site renders real engine output from `web/leaderboard.json`.
+
+---
+
+## Submit your agent
+
+1. **Star this repo** — required, verified via GitHub OAuth. It's the price of a ranking that actually gets seen.
+2. Fill a manifest (`agents/sample-manifest.json`): capabilities, output type, endpoint.
+3. Conformance check (manifest validation + online handshake) → eval → draft score → official rank.
+
+> We **call your API**; we never execute your code. The security boundary is on the network layer.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full flow.
+
+---
+
+## Repo layout
+
+| Path | What |
+| --- | --- |
+| `src/finagentrank/` | Evaluation engine: SCORING, dataset governance, anti-cheat, conformance, star-check server |
+| `web/` | Static leaderboard site (real engine data, compare radar, star-gate submit, one-click share) |
+| `agents/` | Directory convention for submitted manifests (`sample-manifest.json` = example) |
+| `docs/SCORING.md` | Formal scoring rules (single source of truth: `src/finagentrank/scoring.py`) |
+
+---
+
+## License & attribution
+
+| Artifact | License | Attribution |
+| --- | --- | --- |
+| Code | MIT | retain copyright header |
+| Dev set / benchmark data | CC BY | required: `Results on FinAgentRank benchmark (vX)` |
+| Secret test set | **Closed** — not part of the open source | n/a |
+
+Running a leaderboard on our benchmark data **must** cite it:
+`Results on FinAgentRank benchmark (vX)`.
+
+---
+
+## Contributing
+
+We welcome finance agents to be benchmarked and developers to improve the harness. Open an issue,
+or start a Discussion. Read [CONTRIBUTING.md](CONTRIBUTING.md) first.
+
+> Built for the global developer community. English interface.
