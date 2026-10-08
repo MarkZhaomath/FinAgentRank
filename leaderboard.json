@@ -1,0 +1,132 @@
+{
+  "families": [
+    "Data",
+    "Factor",
+    "Research",
+    "Risk",
+    "Signal",
+    "Backtest"
+  ],
+  "agents": [
+    {
+      "name": "ETF-Guard",
+      "dogfood": true,
+      "capability": 0.737,
+      "ci_low": 0.699,
+      "ci_high": 0.81,
+      "top_family": "Risk",
+      "per_family": {
+        "Data": 0.699,
+        "Factor": 0.701,
+        "Research": 0.698,
+        "Risk": 0.919,
+        "Signal": 0.703,
+        "Backtest": 0.7
+      },
+      "status": "official"
+    },
+    {
+      "name": "AlphaFactor-Quant",
+      "dogfood": false,
+      "capability": 0.719,
+      "ci_low": 0.678,
+      "ci_high": 0.799,
+      "top_family": "Factor",
+      "per_family": {
+        "Data": 0.68,
+        "Factor": 0.917,
+        "Research": 0.678,
+        "Risk": 0.681,
+        "Signal": 0.677,
+        "Backtest": 0.681
+      },
+      "status": "official"
+    },
+    {
+      "name": "RiskShield",
+      "dogfood": false,
+      "capability": 0.713,
+      "ci_low": 0.679,
+      "ci_high": 0.78,
+      "top_family": "Risk",
+      "per_family": {
+        "Data": 0.679,
+        "Factor": 0.681,
+        "Research": 0.677,
+        "Risk": 0.879,
+        "Signal": 0.684,
+        "Backtest": 0.681
+      },
+      "status": "official"
+    },
+    {
+      "name": "ETF-Race",
+      "dogfood": true,
+      "capability": 0.712,
+      "ci_low": 0.678,
+      "ci_high": 0.778,
+      "top_family": "Factor",
+      "per_family": {
+        "Data": 0.68,
+        "Factor": 0.876,
+        "Research": 0.678,
+        "Risk": 0.681,
+        "Signal": 0.675,
+        "Backtest": 0.681
+      },
+      "status": "official"
+    },
+    {
+      "name": "SentimentEdge",
+      "dogfood": false,
+      "capability": 0.69,
+      "ci_low": 0.655,
+      "ci_high": 0.759,
+      "top_family": "Signal",
+      "per_family": {
+        "Data": 0.657,
+        "Factor": 0.655,
+        "Research": 0.659,
+        "Risk": 0.652,
+        "Signal": 0.86,
+        "Backtest": 0.66
+      },
+      "status": "official"
+    },
+    {
+      "name": "DriftAgent",
+      "dogfood": false,
+      "capability": 0.616,
+      "ci_low": 0.587,
+      "ci_high": 0.674,
+      "top_family": "Signal",
+      "per_family": {
+        "Data": 0.588,
+        "Factor": 0.586,
+        "Research": 0.589,
+        "Risk": 0.585,
+        "Signal": 0.76,
+        "Backtest": 0.59
+      },
+      "status": "official"
+    },
+    {
+      "name": "NoisyAgent",
+      "dogfood": false,
+      "capability": 0.553,
+      "ci_low": 0.535,
+      "ci_high": 0.571,
+      "top_family": "Factor",
+      "per_family": {
+        "Data": 0.552,
+        "Factor": 0.598,
+        "Research": 0.536,
+        "Risk": 0.556,
+        "Signal": 0.523,
+        "Backtest": 0.557
+      },
+      "status": "official"
+    }
+  ],
+  "schema_version": "0.1"
+}
